@@ -10,19 +10,16 @@ def home():
 @app.route("/", methods=["POST"])
 def webhook():
     update = request.get_json()
-    print("Update ricevuto:", update)  
+    print("Update ricevuto:", update)
 
     chat_id = get_chat_id(update)
     message = get_message_text(update)
 
-    if chat_id and message:
-        if message.strip() == "/start":
-            send_message(chat_id, "Benvenuto! Inviami una descrizione e genererò delle immagini artistiche per te.")
-        else 
-            return 0;
-            
+    if chat_id and message.strip() == "/start":
+        send_message(chat_id, "Benvenuto! Inviami una descrizione e genererò delle immagini artistiche per te.")
+    
+    # Altrimenti non fa nulla
     return "OK", 200
-
 # ✅ AVVIO SERVER Flask, richiesto da Render
 import os
 if __name__ == "__main__":
