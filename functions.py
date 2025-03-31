@@ -13,7 +13,12 @@ def send_photo(photo_url):
     url = f"{BASE_URL}/sendPhoto"
     data = {"chat_id": TELEGRAM_CHAT_ID, "photo": photo_url}
     requests.post(url, data=data)
+def get_chat_id(update):
+    return update.get("message", {}).get("chat", {}).get("id")
 
+def get_message_text(update):
+    return update.get("message", {}).get("text", "")
+    
 def generate_images(prompt):
     full_prompt = f"""
 {prompt}
