@@ -9,8 +9,8 @@ def home():
 
 @app.route("/", methods=["POST"])
 def webhook():
- update = request.get_json()
-    print("Update ricevuto:", update)  # <<< AGGIUNGI QUESTA RIGA
+    update = request.get_json()
+    print("Update ricevuto:", update)  
 
     chat_id = get_chat_id(update)
     message = get_message_text(update)
@@ -18,12 +18,9 @@ def webhook():
     if chat_id and message:
         if message.strip() == "/start":
             send_message(chat_id, "Benvenuto! Inviami una descrizione e genererò delle immagini artistiche per te.")
-        else:
-            send_message(chat_id, "Sto generando le immagini...")
-            images = generate_images(message)
-            for img in images:
-                send_photo(chat_id, img)
-
+        else 
+            return 0;
+            
     return "OK", 200
 
 # ✅ AVVIO SERVER Flask, richiesto da Render
