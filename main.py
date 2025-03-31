@@ -1,6 +1,5 @@
-
 from flask import Flask, request
-from functions import send_message, send_photo, generate_images
+from telegram_api import send_message, get_chat_id, get_message_text
 
 app = Flask(__name__)
 
@@ -10,17 +9,20 @@ def home():
 
 @app.route("/", methods=["POST"])
 def webhook():
-    data = request.get_json()
-    message = data.get("message", {}).get("text", "")
-    chat_id = data.get("message", {}).get("chat", {}).get("id", "")
+    update = request.get_json()
+    chat_id = get_chat_id(update)
+    message = get_message_text(update)
 
-    if message:
-        send_message("Sto generando le immagini…")
-        images = generate_images(message)
-        for img_url in images:
-            send_photo(img_url)
+    if chat_id and message:
+        if message == "/start":
+            send_message(chat_id, "Benvenuto! Inviami una descrizione e genererò delle immagini artistiche per te.")
+        else:
+            send_message(chat_id, f"Hai scritto: {message}")
 
-    return "ok", 200
+    return "OK", 200
 
+# ✅ AVVIO SERVER Flask, richiesto da Render
+import os
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
