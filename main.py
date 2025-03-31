@@ -1,5 +1,5 @@
 from flask import Flask, request
-from telegram_api import send_message, get_chat_id, get_message_text
+from functions import send_message, get_chat_id, get_message_text
 
 app = Flask(__name__)
 
