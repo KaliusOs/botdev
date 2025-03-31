@@ -4,9 +4,9 @@ from config import BASE_URL, TELEGRAM_CHAT_ID, OPENAI_API_KEY
 
 openai.api_key = OPENAI_API_KEY
 
-def send_message(text):
+def send_message(chat_id, text):
     url = f"{BASE_URL}/sendMessage"
-    payload = {"chat_id": TELEGRAM_CHAT_ID, "text": text}
+    payload = {"chat_id": chat_id, "text": text}
     requests.post(url, json=payload)
 
 def send_photo(photo_url):
