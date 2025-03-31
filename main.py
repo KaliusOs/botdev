@@ -9,15 +9,20 @@ def home():
 
 @app.route("/", methods=["POST"])
 def webhook():
-    update = request.get_json()
+ update = request.get_json()
+    print("Update ricevuto:", update)  # <<< AGGIUNGI QUESTA RIGA
+
     chat_id = get_chat_id(update)
     message = get_message_text(update)
 
     if chat_id and message:
-        if message == "/start":
+        if message.strip() == "/start":
             send_message(chat_id, "Benvenuto! Inviami una descrizione e genererò delle immagini artistiche per te.")
         else:
-            send_message(chat_id, f"Hai scritto: {message}")
+            send_message(chat_id, "Sto generando le immagini...")
+            images = generate_images(message)
+            for img in images:
+                send_photo(chat_id, img)
 
     return "OK", 200
 
