@@ -1,41 +1,27 @@
 import requests
-import openai
-from config import BASE_URL, TELEGRAM_CHAT_ID, OPENAI_API_KEY
+from config import TELEGRAM_CHAT_ID, BASE_URL
+import os
 
-openai.api_key = OPENAI_API_KEY
+HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 
-def send_message(chat_id, text):
-    url = f"{BASE_URL}/sendMessage"
-    payload = {"chat_id": chat_id, "text": text}
-    requests.post(url, json=payload)
+def generate_image_hf(prompt):
+    api_url = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+    headers = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
+    payload = {"inputs": prompt}
 
-def send_photo(photo_url):
+    response = requests.post(api_url, headers=headers, json=payload)
+    if response.status_code == 200:
+        return response.content
+    else:
+        print("Errore HuggingFace:", response.status_code, response.text)
+        return None
+
+def send_image_bytes(image_bytes, chat_id=None, caption=None):
     url = f"{BASE_URL}/sendPhoto"
-    data = {"chat_id": TELEGRAM_CHAT_ID, "photo": photo_url}
-    requests.post(url, data=data)
-def get_chat_id(update):
-    return update.get("message", {}).get("chat", {}).get("id")
-
-def get_message_text(update):
-    return update.get("message", {}).get("text", "")
-    
-def generate_images(prompt):
-    full_prompt = f"""
-{prompt}
-Style artistique : Aquarelle + encre, Contrasté, textures granuleuses,
-Palette : noir, brun, rouge, beige poussière,
-Typographie dessinée à la main ou effet pinceau / gratté,
-Format portrait vertical 1080x1920 px format 9:16 (TikTok).
-Ne pas inclure de texte sur l'image.
-"""
-    images = []
-    for _ in range(10):
-        response = openai.Image.create(
-            prompt=full_prompt,
-            n=1,
-            size="1024x1792",
-            model="dall-e-3"
-        )
-        image_url = response["data"][0]["url"]
-        images.append(image_url)
-    return images
+    files = {'photo': ("image.jpg", image_bytes, "image/jpeg")}
+    data = {
+        "chat_id": chat_id or TELEGRAM_CHAT_ID,
+    }
+    if caption:
+        data["caption"] = caption
+    requests.post(url, data=data, files=files)
