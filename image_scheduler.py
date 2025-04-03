@@ -1,17 +1,16 @@
 import time
 import random
 import os
-from functions import generate_images, send_photo
+from functions import generate_image_hf, send_image_bytes  # <-- importa queste
+# from functions import generate_images, send_photo  <-- non più necessario
 
 def run_generation_loop(chat_id, raw_prompts, style_text):
     print("🟢 Avvio generazione immagini per Telegram")
 
-    # Crea lista prompt
     prompts = [p.strip() for p in raw_prompts.strip().split("\n\n") if p.strip()]
     if len(prompts) == 1:
         prompts = [p.strip() for p in raw_prompts.strip().split("\n") if p.strip()]
 
-    # File per tenere traccia dei prompt già fatti
     state_file = f"generated_{chat_id}.txt"
     already_done = []
 
@@ -28,12 +27,11 @@ def run_generation_loop(chat_id, raw_prompts, style_text):
 
         try:
             print(f"\n🎨 [{idx+1}/{len(prompts)}] Generazione immagine...")
-            images = generate_images(full_prompt)
-            if images:
+            image_bytes = generate_image_hf(full_prompt)
+            if image_bytes:
                 caption = f"🖼 Immagine {idx+1}/{len(prompts)}"
-                send_photo(images[0], chat_id=chat_id)
+                send_image_bytes(image_bytes, chat_id=chat_id, caption=caption)
                 print("✅ Immagine inviata.")
-                # Aggiungi prompt alla lista completati
                 with open(state_file, "a", encoding="utf-8") as f:
                     f.write(prompt + "\n\n")
             else:
