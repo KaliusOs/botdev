@@ -3,6 +3,13 @@ from functions import send_message, get_chat_id, get_message_text
 from threading import Thread
 from image_scheduler import run_generation_loop
 
+from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, HUGGINGFACE_TOKEN
+
+if not all([TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, HUGGINGFACE_TOKEN]):
+    print("❌ Variabili mancanti! Verifica su Railway.")
+    exit(1)
+
+
 app = Flask(__name__)
 user_sessions = {}
 
