@@ -1,8 +1,7 @@
 import time
 import random
 import os
-from functions import generate_image_hf, send_image_bytes  # <-- importa queste
-# from functions import generate_images, send_photo  <-- non più necessario
+from functions import generate_image_hf, send_image_bytes
 
 def run_generation_loop(chat_id, raw_prompts, style_text):
     print("🟢 Avvio generazione immagini per Telegram")
