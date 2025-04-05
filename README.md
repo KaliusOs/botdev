@@ -1,2 +1,2 @@
 # botdev
-bot to generate images using api chat gpt
+botfor telegram testing
